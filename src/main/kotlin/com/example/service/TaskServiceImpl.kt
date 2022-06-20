@@ -20,10 +20,11 @@ class TaskServiceImpl : TaskService {
     private val cachedNodes: MutableMap<String, Set<String>> = mutableMapOf()
 
     override fun connections(): List<Connection> {
-        log.debug("Connections = {}", connections)
-        log.debug("Cached nodes = {}", cachedNodes)
-        return this.connections
+        val sortedWith = this.connections
                 .sortedWith(compareBy(Connection::connectFrom, Connection::connectTo))
+        log.debug("Connections = {}", sortedWith)
+        log.debug("Cached nodes = {}", cachedNodes)
+        return sortedWith
 
     }
 
@@ -137,10 +138,8 @@ class TaskServiceImpl : TaskService {
     }
 
     private fun prepareSetToBeMerged(setToBeConnectedGraphs: Set<Set<String>>, setToBeConnectedGraph: Set<String>): MutableSet<String> {
-        return HashSet(setToBeConnectedGraphs)
-                .stream()
-                .filter { nextSet: Set<String> -> nextSet != setToBeConnectedGraph }
-                .flatMap { obj: Set<String> -> obj.stream() }
-                .collect(Collectors.toSet())
+        return setToBeConnectedGraphs
+                .filter { it != setToBeConnectedGraph }
+                .flatMap {it.toSet() }.toMutableSet()
     }
 }
