@@ -22,7 +22,9 @@ class TaskServiceImpl : TaskService {
     override fun connections(): List<Connection> {
         log.debug("Connections = {}", connections)
         log.debug("Cached nodes = {}", cachedNodes)
-        return this.connections;
+        return this.connections
+                .sortedWith(compareBy(Connection::connectFrom, Connection::connectTo))
+
     }
 
     override fun apply(connectFrom: String, connectTos: List<String>) {
