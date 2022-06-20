@@ -23,7 +23,6 @@ class TaskServiceImpl : TaskService {
         log.debug("Connections = {}", connections)
         log.debug("Cached nodes = {}", cachedNodes)
         return this.connections;
-        //return listOf(Connection("1", "2"))
     }
 
     override fun apply(connectFrom: String, connectTos: List<String>) {
@@ -117,7 +116,7 @@ class TaskServiceImpl : TaskService {
                 // Duplicate to the set to speed up "contains"!
                 connectionsSet.add(reversedNewConnection)
             }
-            log.info("Connected: {} - {}", connectFrom, connectTo);
+            //log.info("Connected: {} - {}", connectFrom, connectTo);
         }
     }
 
