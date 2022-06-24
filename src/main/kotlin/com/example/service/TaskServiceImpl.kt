@@ -4,7 +4,6 @@ import com.example.domain.Connection
 import jakarta.inject.Singleton
 import org.slf4j.LoggerFactory
 import java.util.function.Consumer
-import java.util.function.Function
 import java.util.stream.Collectors
 import java.util.stream.Stream
 
@@ -22,20 +21,16 @@ class TaskServiceImpl : TaskService {
     override fun connections(): List<Connection> {
         val sortedWith = this.connections
                 .sortedWith(compareBy(Connection::connectFrom, Connection::connectTo))
-        log.debug("Connections = {}", sortedWith)
-        log.debug("Cached nodes = {}", cachedNodes)
         return sortedWith
-
     }
 
     override fun apply(connectFrom: String, connectTos: List<String>) {
         // Guard statements!
-        if (connectFrom==null || connectTos==null)
-            throw IllegalArgumentException("Nullable input!");
         if (connectFrom.isEmpty() || connectTos.isEmpty())
             throw IllegalArgumentException("Invalid empty input!");
         // Filter out nulls and empty strings
-        var filteredConnectTos = connectTos.filter{it != null && it.isNotEmpty() }
+        var filteredConnectTos = connectTos
+                .filter{it != null && it.isNotEmpty() }
         if (filteredConnectTos.isEmpty())
             throw IllegalArgumentException("Invalid input! No valid connectTos!");
         var newNodes = connectTos.toMutableSet()
@@ -53,7 +48,7 @@ class TaskServiceImpl : TaskService {
                 // Like init case: new separate graph
                 processSeparateGraph(newNodes)
             } else { // Case when some merge is required!
-                log.debug("No existing keys!")
+                //log.debug("No existing keys!")
                 processConnectingGraphs(newNodes)
             }
         }
@@ -73,7 +68,9 @@ class TaskServiceImpl : TaskService {
                 .mapValues { it.value.toMutableSet() }
         val existingNodes = split[true]!!
         val nonExistingNodes = split[false]
-        if (nonExistingNodes != null && nonExistingNodes.isNotEmpty() && nonExistingNodes.size > 1) {
+        if (nonExistingNodes != null
+                && nonExistingNodes.isNotEmpty()
+                && nonExistingNodes.size > 1) {
             // Create a new separate graph of 2+;
             processSeparateGraph(nonExistingNodes)
         }
